@@ -38,7 +38,7 @@ executables:
 
 tests:
   string-alignment-test:
-    main:                Spec.hs
+    main:                StringAlignmentTest.hs
     source-dirs:         test
     ghc-options:
     - -threaded
@@ -46,3 +46,4 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - string-alignment
+    - HUnit

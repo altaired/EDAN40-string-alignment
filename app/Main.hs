@@ -1,6 +1,6 @@
 module Main where
 
-import Lib
+import StringAlignment
 
 main :: IO ()
-main = someFunc
+main = putStrLn "Haskell is Love!"
