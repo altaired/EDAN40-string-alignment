@@ -38,3 +38,26 @@ maximaBy :: Ord b => (a -> b) -> [a] -> [a]
 maximaBy valueFcn xs = filter (\e -> m == (valueFcn e)) xs
   where m = maximum (map valueFcn xs)
 
+
+-- 2 d)
+type AlignmentType = (String,String)
+
+score2 :: (String, String) -> Int
+score2 ([], []) = 0
+score2 ((x:xs), (y:ys)) = (score x y) + score2 (xs, ys)
+
+
+optAlignments :: String -> String -> [AlignmentType]
+optAlignments s1 s2 = maximaBy score2 (allAlignments s1 s2)
+
+
+allAlignments :: String -> String -> [AlignmentType]
+allAlignments [] [] = []
+allAlignments s [] = [(s, replicate (length s) '-')]
+allAlignments [] s = [(replicate (length s) '-', s)]
+allAlignments (x:xs) (y:ys) =
+  attachHeads x y $ concat
+  [ (allAlignments xs       ys  )
+  , (allAlignments xs   ('-':ys))
+  , (allAlignments ('-':xs) ys  ) ]
+
