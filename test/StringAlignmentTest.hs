@@ -10,7 +10,11 @@ module Main where
     , similarityScore "" "aa" ~?= (2 * scoreMismatch)
     , similarityScore "" "" ~?= 0 ]
 
+  maximaByTest =
+    test
+    [ maximaBy length ["cs", "efd", "lth", "it"] ~?= ["efd","lth"] ]
+
   main = runTestTT $
-    test [
-      "similarityScore" ~: Main.similarityScoreTest
-    ]
+    test
+    [ "similarityScore" ~: Main.similarityScoreTest
+    , "maximaByTest" ~: Main.maximaByTest ]
