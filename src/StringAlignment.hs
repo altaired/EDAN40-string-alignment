@@ -6,6 +6,8 @@ scoreMatch = 0
 scoreMismatch = -1
 scoreSpace = -1
 
+
+-- 2 a)
 score :: Char -> Char -> Int
 score '-' y = scoreSpace
 score x '-' = scoreSpace
@@ -23,4 +25,10 @@ similarityScore (x:xs) (y:ys) =
   [ (similarityScore xs     ys    ) + (score x   y)
   , (similarityScore (x:xs) ys    ) + (score '-' y)
   , (similarityScore xs     (y:ys)) + (score x '-') ]
+
+
+-- 2 b)
+-- For each tuple containing lists L1 and L2, prepend h1 and h2 to L1 and L2 respectivly
+attachHeads :: a -> a -> [([a],[a])] -> [([a],[a])] 
+attachHeads h1 h2 aList = [(h1:xs,h2:ys) | (xs,ys) <- aList]
 
