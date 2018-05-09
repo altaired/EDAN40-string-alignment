@@ -42,7 +42,7 @@ maximaBy valueFcn xs = filter (\e -> m == (valueFcn e)) xs
 -- 2 d)
 type AlignmentType = (String,String)
 
-score2 :: (String, String) -> Int
+score2 :: AlignmentType -> Int
 score2 ([], []) = 0
 score2 ((x:xs), (y:ys)) = (score x y) + score2 (xs, ys)
 
@@ -60,27 +60,4 @@ allAlignments (x:xs) (y:ys) =
   [ attachHeads x y (allAlignments xs       ys  )
   , attachHeads x '-' (allAlignments xs   (y:ys))
   , attachHeads '-' y (allAlignments (x:xs) ys  ) ]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
