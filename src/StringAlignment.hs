@@ -56,8 +56,31 @@ allAlignments [] [] = []
 allAlignments s [] = [(s, replicate (length s) '-')]
 allAlignments [] s = [(replicate (length s) '-', s)]
 allAlignments (x:xs) (y:ys) =
-  attachHeads x y $ concat
-  [ (allAlignments xs       ys  )
-  , (allAlignments xs   ('-':ys))
-  , (allAlignments ('-':xs) ys  ) ]
+  concat
+  [ attachHeads x y (allAlignments xs       ys  )
+  , attachHeads x '-' (allAlignments xs   (y:ys))
+  , attachHeads '-' y (allAlignments (x:xs) ys  ) ]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
