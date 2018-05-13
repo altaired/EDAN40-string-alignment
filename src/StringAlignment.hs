@@ -81,11 +81,11 @@ optimalOptAlignments xs ys = snd $ alignment (length xs) (length ys)
     entry i j = ((fst . head) tuples, concat [b | (_, b) <- tuples])
       where
         tuples = maximaBy fst
-          [ merge (alignment (i-1) (j-1)) (score x y) x   y
-          , merge (alignment  i    (j-1)) scoreSpace  '-' y
-          , merge (alignment (i-1)  j   ) scoreSpace  x   '-' ]
-        merge :: Entry -> Int -> Char -> Char -> Entry
-        merge (s, als) score tx ty = (s + score, attachTails tx ty als)
+          [ merge (alignment (i-1) (j-1))  x  y
+          , merge (alignment  i    (j-1)) '-' y
+          , merge (alignment (i-1)  j   )  x '-' ]
+        merge :: Entry -> Char -> Char -> Entry
+        merge (s, als) x y = (s + (score x y), attachTails x y als)
         x = xs!!(i - 1)
         y = ys!!(j - 1)
 
