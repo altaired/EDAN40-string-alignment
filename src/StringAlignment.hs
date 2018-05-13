@@ -34,7 +34,6 @@ attachHeads h1 h2 aList = [(h1:xs,h2:ys) | (xs,ys) <- aList]
 
 
 -- 2 c)
--- TODO: Optimize
 maximaBy :: Ord b => (a -> b) -> [a] -> [a]
 maximaBy valueFcn xs = filter (\e -> m == (valueFcn e)) xs
   where m = maximum (map valueFcn xs)
@@ -86,7 +85,7 @@ optAlignmentsDP xs ys = snd $ alignment (length xs) (length ys)
     entry :: Int -> Int -> Entry
     entry 0 0 = (0, [("", "")])
     entry i 0 = (i * scoreSpace, [(take i xs, replicate i '-')])
-    entry 0 j = (j * scoreSpace, [(replicate j '-', take j ys)]) -- TODO: Store only Int
+    entry 0 j = (j * scoreSpace, [(replicate j '-', take j ys)])
     entry i j = ((fst . head) tuples, concat [b | (_, b) <- tuples])
       where
         tuples = maximaBy fst
