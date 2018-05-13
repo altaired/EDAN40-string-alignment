@@ -43,13 +43,13 @@ maximaBy valueFcn xs = filter (\e -> m == (valueFcn e)) xs
 -- 2 d)
 type AlignmentType = (String,String)
 
-score2 :: AlignmentType -> Int
-score2 ([], []) = 0
-score2 ((x:xs), (y:ys)) = (score x y) + score2 (xs, ys)
+scoreWord :: AlignmentType -> Int
+scoreWord ([], []) = 0
+scoreWord ((x:xs), (y:ys)) = (score x y) + scoreWord (xs, ys)
 
 
 optAlignments :: String -> String -> [AlignmentType]
-optAlignments s1 s2 = maximaBy score2 (allAlignments s1 s2)
+optAlignments s1 s2 = maximaBy scoreWord (allAlignments s1 s2)
 
 
 allAlignments :: String -> String -> [AlignmentType]
@@ -63,17 +63,26 @@ allAlignments (x:xs) (y:ys) =
   , attachHeads '-' y (allAlignments (x:xs) ys  ) ]
 
 
-attachTails :: a -> a -> [([a],[a])] -> [([a],[a])] 
-attachTails tx ty aList = [(xs ++ [tx], ys ++ [ty]) | (xs,ys) <- aList]
+outputAlignments :: String -> String -> IO()
+outputAlignments s1 s2 = do
+  putStrLn $ unlines $ concatMap (\(a,b) -> ["", a, b, ""]) alg
+  print $ length alg
+  where alg = optAlignments s1 s2
+
+
+
+-- 3
 
 type Entry = (Int, [AlignmentType])
 
-optimalOptAlignments :: String -> String -> [AlignmentType]
-optimalOptAlignments xs ys = snd $ alignment (length xs) (length ys)
+optAlignmentsDP :: String -> String -> [AlignmentType]
+optAlignmentsDP xs ys = snd $ alignment (length xs) (length ys)
   where
     alignment :: Int -> Int -> Entry
     alignment i j = table!!i!!j
+
     table = [[ entry i j | j<-[0..]] | i<-[0..]]
+
     entry :: Int -> Int -> Entry
     entry 0 0 = (0, [("", "")])
     entry i 0 = (i * scoreSpace, [(take i xs, replicate i '-')])
@@ -84,23 +93,23 @@ optimalOptAlignments xs ys = snd $ alignment (length xs) (length ys)
           [ merge (alignment (i-1) (j-1))  x  y
           , merge (alignment  i    (j-1)) '-' y
           , merge (alignment (i-1)  j   )  x '-' ]
-        merge :: Entry -> Char -> Char -> Entry
-        merge (s, als) x y = (s + (score x y), attachTails x y als)
+
         x = xs!!(i - 1)
         y = ys!!(j - 1)
 
+        merge :: Entry -> Char -> Char -> Entry
+        merge (s, als) x y = (s + (score x y), attachTails x y als)
 
-outputAlignments :: String -> String -> IO()
-outputAlignments s1 s2 = do
+        attachTails :: a -> a -> [([a],[a])] -> [([a],[a])] 
+        attachTails tx ty aList = [(xs ++ [tx], ys ++ [ty]) | (xs,ys) <- aList]
+
+
+outputAlignmentsDP :: String -> String -> IO()
+outputAlignmentsDP s1 s2 = do
   putStrLn $ unlines $ concatMap (\(a,b) -> ["", a, b, ""]) alg
-  putStrLn $ show $ length alg
-  where alg = optimalOptAlignments s1 s2
+  print $ length alg
+  where alg = optAlignmentsDP s1 s2
 
 
-outputAlignments2 :: String -> String -> IO()
-outputAlignments2 s1 s2 = do
-  putStrLn $ unlines $ concatMap (\(a,b) -> ["", a, b, ""]) alg
-  putStrLn $ show $ length alg
-  where alg = optAlignments s1 s2
 
 
