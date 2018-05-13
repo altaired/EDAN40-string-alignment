@@ -75,7 +75,7 @@ optimalOptAlignments xs ys = snd $ alignment (length xs) (length ys)
     alignment i j = table!!i!!j
     table = [[ entry i j | j<-[0..]] | i<-[0..]]
     entry :: Int -> Int -> Entry
-    entry 0 0 = (0, [])
+    entry 0 0 = (0, [("", "")])
     entry i 0 = (i * scoreSpace, [(take i xs, replicate i '-')])
     entry 0 j = (j * scoreSpace, [(replicate j '-', take j ys)]) -- TODO: Store only Int
     entry i j = ((fst . head) tuples, concat [b | (_, b) <- tuples])
