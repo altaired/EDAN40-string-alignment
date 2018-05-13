@@ -18,13 +18,13 @@ score x y
 
 similarityScore :: String -> String -> Int
 similarityScore [] [] = 0
-similarityScore s [] = (*) scoreMismatch $ length s
-similarityScore [] s = (*) scoreMismatch $ length s
+similarityScore s [] = (*) scoreSpace $ length s
+similarityScore [] s = (*) scoreSpace $ length s
 similarityScore (x:xs) (y:ys) =
   maximum
-  [ (similarityScore xs     ys    ) + (score x   y)
-  , (similarityScore (x:xs) ys    ) + (score '-' y)
-  , (similarityScore xs     (y:ys)) + (score x '-') ]
+  [ (similarityScore    xs     ys ) + (score  x  y )
+  , (similarityScore (x:xs)    ys ) + (score '-' y )
+  , (similarityScore    xs  (y:ys)) + (score  x '-') ]
 
 
 -- 2 b)
@@ -57,9 +57,9 @@ allAlignments s [] = [(s, replicate (length s) '-')]
 allAlignments [] s = [(replicate (length s) '-', s)]
 allAlignments (x:xs) (y:ys) =
   concat
-  [ attachHeads x y (allAlignments xs       ys  )
-  , attachHeads x '-' (allAlignments xs   (y:ys))
-  , attachHeads '-' y (allAlignments (x:xs) ys  ) ]
+  [ attachHeads  x  y  (allAlignments    xs      ys  )
+  , attachHeads  x '-' (allAlignments    xs   (y:ys) )
+  , attachHeads '-' y  (allAlignments (x:xs)     ys  ) ]
 
 
 outputAlignments :: String -> String -> IO()
@@ -71,6 +71,28 @@ outputAlignments s1 s2 = do
 
 
 -- 3
+
+similarityScoreDP :: String -> String -> Int
+similarityScoreDP xs ys = simScore (length xs) (length ys)
+  where
+    simScore :: Int -> Int -> Int
+    simScore i j = table!!i!!j
+
+    table = [[ entry i j | j<-[0..]] | i<-[0..]]
+
+    entry :: Int -> Int -> Int
+    entry 0 0 = 0
+    entry i 0 = i * scoreSpace
+    entry 0 j = j * scoreSpace
+    entry i j = maximum
+      [ (simScore (i-1)     (j-1) ) + (score  x  y )
+      , (simScore  i        (j-1) ) + (score '-' y )
+      , (simScore (i-1)      j    ) + (score  x '-') ]
+
+      where
+        x = xs!!(i - 1)
+        y = ys!!(j - 1)
+
 
 type Entry = (Int, [AlignmentType])
 
