@@ -61,3 +61,10 @@ allAlignments (x:xs) (y:ys) =
   , attachHeads x '-' (allAlignments xs   (y:ys))
   , attachHeads '-' y (allAlignments (x:xs) ys  ) ]
 
+
+outputAlignments :: String -> String -> IO()
+outputAlignments s1 s2 =
+  putStrLn $ unlines $ concatMap (\(a,b) -> ["", a, b, ""]) alg
+  where alg = optAlignments s1 s2
+
+
