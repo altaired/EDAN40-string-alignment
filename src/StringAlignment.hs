@@ -34,6 +34,7 @@ attachHeads h1 h2 aList = [(h1:xs,h2:ys) | (xs,ys) <- aList]
 
 
 -- 2 c)
+-- TODO: Optimize
 maximaBy :: Ord b => (a -> b) -> [a] -> [a]
 maximaBy valueFcn xs = filter (\e -> m == (valueFcn e)) xs
   where m = maximum (map valueFcn xs)
@@ -62,9 +63,44 @@ allAlignments (x:xs) (y:ys) =
   , attachHeads '-' y (allAlignments (x:xs) ys  ) ]
 
 
+attachTails :: a -> a -> [([a],[a])] -> [([a],[a])] 
+attachTails tx ty aList = [(xs ++ [tx], ys ++ [ty]) | (xs,ys) <- aList]
+
+type Entry = (Int, [AlignmentType])
+
+optimalOptAlignments :: String -> String -> [AlignmentType]
+optimalOptAlignments xs ys = snd $ alignment (length xs) (length ys)
+  where
+    alignment :: Int -> Int -> Entry
+    alignment i j = table!!i!!j
+    table = [[ entry i j | j<-[0..]] | i<-[0..]]
+    entry :: Int -> Int -> Entry
+    entry 0 0 = (0, [])
+    entry i 0 = (i * scoreSpace, [(take i xs, replicate i '-')])
+    entry 0 j = (j * scoreSpace, [(replicate j '-', take j ys)]) -- TODO: Store only Int
+    entry i j = ((fst . head) tuples, concat [b | (_, b) <- tuples])
+      where
+        tuples = maximaBy fst
+          [ merge (alignment (i-1) (j-1)) (score x y) x   y
+          , merge (alignment  i    (j-1)) scoreSpace  '-' y
+          , merge (alignment (i-1)  j   ) scoreSpace  x   '-' ]
+        merge :: Entry -> Int -> Char -> Char -> Entry
+        merge (s, als) score tx ty = (s + score, attachTails tx ty als)
+        x = xs!!(i - 1)
+        y = ys!!(j - 1)
+
+
 outputAlignments :: String -> String -> IO()
-outputAlignments s1 s2 =
+outputAlignments s1 s2 = do
   putStrLn $ unlines $ concatMap (\(a,b) -> ["", a, b, ""]) alg
+  putStrLn $ show $ length alg
+  where alg = optimalOptAlignments s1 s2
+
+
+outputAlignments2 :: String -> String -> IO()
+outputAlignments2 s1 s2 = do
+  putStrLn $ unlines $ concatMap (\(a,b) -> ["", a, b, ""]) alg
+  putStrLn $ show $ length alg
   where alg = optAlignments s1 s2
 
 
